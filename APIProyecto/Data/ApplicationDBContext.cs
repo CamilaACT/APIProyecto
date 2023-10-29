@@ -43,20 +43,31 @@ namespace APIProyecto.Data
             .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
             .HasForeignKey(p => p.TipoProductoIdTipoProducto);
 
-            modelBuilder.Entity<Producto>()
+            modelBuilder.Entity<ProductoColorTalla>()
+        .HasOne(pct => pct.Producto)
+        .WithMany()
+        .HasForeignKey(pct => pct.ProductoIdProduto);
+
+            modelBuilder.Entity<ProductoColorTalla>()
+                .HasOne(pct => pct.TallaProducto)
+                .WithMany()
+                .HasForeignKey(pct => pct.TallaProductoIdTallaProducto);
+
+            modelBuilder.Entity<ProductoColorTalla>()
+                .HasOne(pct => pct.ColorProducto)
+                .WithMany()
+                .HasForeignKey(pct => pct.ColorProductoIdColorProducto);
+
+
+            /* modelBuilder.Entity<ColorProducto>()
                  .HasMany(p => p.ProductosColoresTallas)
-                 .WithOne(t => t.Producto)
-                 .HasForeignKey(t => t.ProductoIdProduto);
+                 .WithOne(t => t.ColorProducto)
+                 .HasForeignKey(t => t.ColorProductoIdColorProducto);*/
 
-            modelBuilder.Entity<ColorProducto>()
-                .HasMany(p => p.ProductosColoresTallas)
-                .WithOne(t => t.ColorProducto)
-                .HasForeignKey(t => t.ColorProductoIdColorProducto);
-
-            modelBuilder.Entity<TallaProducto>()
+            /*modelBuilder.Entity<TallaProducto>()
                 .HasMany(p => p.ProductosColoresTallas)
                 .WithOne(t => t.TallaProducto)
-                .HasForeignKey(t => t.TallaProductoIdTallaProducto);
+                .HasForeignKey(t => t.TallaProductoIdTallaProducto);*/
 
 
 
