@@ -33,10 +33,15 @@ namespace APIProyecto.Data
                     NumeroTarjeta=123234345,
                 });
 
-            modelBuilder.Entity<TipoProducto>()
+            /*modelBuilder.Entity<TipoProducto>()
                  .HasMany(p => p.Productos)
                  .WithOne(t => t.TipoProducto)
-                 .HasForeignKey(t => t.TipoProductoIdTipoProducto);
+                 .HasForeignKey(t => t.TipoProductoIdTipoProducto);*/
+
+            modelBuilder.Entity<Producto>()
+            .HasOne(p => p.TipoProducto)
+            .WithMany()  // Puedes configurar WithMany si hay una relación de uno a muchos
+            .HasForeignKey(p => p.TipoProductoIdTipoProducto);
 
             modelBuilder.Entity<Producto>()
                  .HasMany(p => p.ProductosColoresTallas)

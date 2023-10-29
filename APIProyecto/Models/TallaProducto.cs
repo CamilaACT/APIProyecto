@@ -6,7 +6,7 @@ namespace APIProyecto.Models
     {
         [Key]
         public int IdTallaProducto { get; set; }
-        [Required]
+        
         public string Talla { get; set; }
 
         // Propiedad de navegación para la relación uno a muchos con ProductoColorTalla

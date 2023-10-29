@@ -12,7 +12,7 @@ namespace APIProyecto.Models
 
         // Clave foránea para la relación uno a muchos con TipoProducto
         public int TipoProductoIdTipoProducto { get; set; }
-        public TipoProducto TipoProducto { get; set; }
+        public virtual TipoProducto TipoProducto { get; set; }
 
         // Propiedad de navegación para la relación uno a muchos con ProductoColorTalla
         public ICollection<ProductoColorTalla> ProductosColoresTallas { get; set; }

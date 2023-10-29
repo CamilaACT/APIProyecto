@@ -18,15 +18,23 @@ namespace APIProyecto.Controllers
         {
             _db=db;
         }
-        // GET: api/<TipoProductoController> En este método espero que se me retorne la lista de todos los tipos que tengo
+        // GET: api/<ColorProducto>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<TipoProducto> Tiposproductos = await _db.sgc_TipoProducto.ToListAsync();
-            return Ok(Tiposproductos);
+            try
+            {
+                List<TipoProducto> Tiposproductos = await _db.sgc_TipoProducto.ToListAsync();
+                return Ok(Tiposproductos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
         }
 
-        // GET api/<TipoProductoController>/5 Este método solo me retorna un tipoproducto especifico
+        // GET api/<ColorProducto>/5 //busca por ID
         [HttpGet("{IdTipoProducto}")]
         public async Task<IActionResult> Get(int IdTipoProducto)
         {
@@ -38,43 +46,55 @@ namespace APIProyecto.Controllers
             return Ok(tipo);
         }
 
-        // POST api/<TipoProductoController> Este método crea un tipo producto como es post lo recibe en el cuerpo de la petición
+
+
+
+        // POST api/<ColorProducto>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TipoProducto tipoproducto)
+        public async Task<IActionResult> Post([FromBody] TipoProductoDTO tipoDTO)
         {
-            TipoProducto tipoproducto2 = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.IdTipoProducto==tipoproducto.IdTipoProducto);
-            if (tipoproducto2 == null && tipoproducto!=null)
+            TipoProducto tipo2 = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.Nombre.Equals(tipoDTO.Nombre));
+            if (tipo2 == null && tipoDTO!=null)
             {
-                await _db.sgc_TipoProducto.AddAsync(tipoproducto);
+                var tipo = new TipoProducto
+                {
+                    Nombre = tipoDTO.Nombre,
+                    Descripcion = tipoDTO.Descripcion
+                };
+                await _db.sgc_TipoProducto.AddAsync(tipo);
                 await _db.SaveChangesAsync();
-                return Ok(tipoproducto);
+                return Ok(tipo);
             }
-            return BadRequest("El objeto ya existe");
+            return BadRequest("El tipo ya existe");
         }
 
-        // PUT api/<TipoProductoController>/5 Este método edita el tipo producto si primero lo encuentra
+        // PUT api/<ColorProducto>/5
         [HttpPut("{IdTipoProducto}")]
-        public async Task<IActionResult> Put(int IdTipoProducto, [FromBody] TipoProducto tipoproducto)
+        public async Task<IActionResult> Put(int IdTipoProducto, [FromBody] TipoProductoDTO tipoDTO)
         {
-            TipoProducto tipoProducto2 = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.IdTipoProducto==IdTipoProducto);
-            if (tipoProducto2 != null)
+            TipoProducto actualaModificar = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.IdTipoProducto==IdTipoProducto);
+            var nombrequeyatengo=actualaModificar.Nombre;
+            TipoProducto tallaquequieroponer = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.Nombre.Equals(tipoDTO.Nombre));
+
+            if ((tallaquequieroponer == null || tallaquequieroponer.Nombre.Equals(nombrequeyatengo)) && tipoDTO != null)
             {
-                tipoProducto2.Nombre = tipoproducto.Nombre != null ? tipoproducto.Nombre : tipoProducto2.Nombre;
-                _db.sgc_TipoProducto.Update(tipoProducto2);
+                actualaModificar.Nombre = tipoDTO.Nombre != null ? tipoDTO.Nombre : actualaModificar.Nombre;
+                actualaModificar.Descripcion = tipoDTO.Descripcion != null ? tipoDTO.Descripcion : actualaModificar.Descripcion;
+                _db.sgc_TipoProducto.Update(actualaModificar);
                 await _db.SaveChangesAsync();
-                return Ok(tipoProducto2);   
+                return Ok(actualaModificar);
             }
-            return BadRequest("El producto a modificar no existe");
+            return BadRequest("La talla ya existe");
         }
 
-        // DELETE api/<TipoProductoController>/5
+        // DELETE api/<ColorProducto>/5
         [HttpDelete("{IdTipoProducto}")]
         public async Task<IActionResult> Delete(int IdTipoProducto)
         {
-            TipoProducto tipoproducto = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.IdTipoProducto==IdTipoProducto);
-            if (tipoproducto != null)
+            TipoProducto talla = await _db.sgc_TipoProducto.FirstOrDefaultAsync(x => x.IdTipoProducto==IdTipoProducto);
+            if (talla != null)
             {
-                _db.sgc_TipoProducto.Remove(tipoproducto);
+                _db.sgc_TipoProducto.Remove(talla);
                 await _db.SaveChangesAsync();
                 return NoContent();
             }

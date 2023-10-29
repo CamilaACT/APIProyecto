@@ -2,6 +2,7 @@
 using APIProyecto.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Drawing;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -35,7 +36,7 @@ namespace APIProyecto.Controllers
         }
 
         // GET api/<ColorProducto>/5 //busca por ID
-        [HttpGet("{dColorProducto}")]
+        [HttpGet("{IdColorProducto}")]
         public async Task<IActionResult> Get(int IdColorProducto)
         {
             ColorProducto color = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.IdColorProducto==IdColorProducto);
@@ -51,11 +52,15 @@ namespace APIProyecto.Controllers
 
         // POST api/<ColorProducto>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ColorProducto color)
+        public async Task<IActionResult> Post([FromBody] ColorProductoDTO colorDTO)
         {
-            ColorProducto color2 = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.Nombre.Equals(color.Nombre));
-            if (color2 == null && color!=null)
+            ColorProducto color2 = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.Nombre.Equals(colorDTO.Nombre));
+            if (color2 == null && colorDTO!=null)
             {
+                var color = new ColorProducto
+                {
+                    Nombre = colorDTO.Nombre
+                };
                 await _db.sgc_ColorProducto.AddAsync(color);
                 await _db.SaveChangesAsync();
                 return Ok(color);
@@ -65,17 +70,20 @@ namespace APIProyecto.Controllers
 
         // PUT api/<ColorProducto>/5
         [HttpPut("{IdColorProducto}")]
-        public async Task<IActionResult> Put(int IdColorProducto, [FromBody] ColorProducto color)
+        public async Task<IActionResult> Put(int IdColorProducto, [FromBody] ColorProductoDTO colorDTO)
         {
-            ColorProducto color2 = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.IdColorProducto==IdColorProducto);
-            if (color2 != null)
+            ColorProducto actualaModificar = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.IdColorProducto==IdColorProducto);
+            var colorqueyatengo = actualaModificar.Nombre;
+            ColorProducto colorquequieroponer = await _db.sgc_ColorProducto.FirstOrDefaultAsync(x => x.Nombre.Equals(colorDTO.Nombre));
+            
+            if ((colorquequieroponer == null||colorquequieroponer.Nombre.Equals(colorqueyatengo)) && colorDTO != null)
             {
-                color2.Nombre = color.Nombre != null ? color.Nombre : color2.Nombre;
-                _db.sgc_ColorProducto.Update(color2);
+                actualaModificar.Nombre = colorDTO.Nombre != null ? colorDTO.Nombre : actualaModificar.Nombre;
+                _db.sgc_ColorProducto.Update(actualaModificar);
                 await _db.SaveChangesAsync();
-                return Ok(color2);
+                return Ok(actualaModificar);
             }
-            return BadRequest("El producto a modificar no existe");
+            return BadRequest("El color ya existe");
         }
 
         // DELETE api/<ColorProducto>/5

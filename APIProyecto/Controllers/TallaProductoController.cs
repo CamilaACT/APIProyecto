@@ -18,56 +18,74 @@ namespace APIProyecto.Controllers
         {
             _db=db;
         }
-        // GET: api/<TallaProductoController>
+        // GET: api/<ColorProducto>
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            List<TallaProducto> Tiposproductos = await _db.sgc_TallaProducto.ToListAsync();
-            return Ok(Tiposproductos);
-        }
-
-        // GET api/<TallaProductoController>/5
-        [HttpGet("{IdTallaProducto}")]
-        public async Task<IActionResult> Get(int IdTallaProducto)
-        {
-            TallaProducto tipo = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.IdTallaProducto==IdTallaProducto);
-            if (tipo == null)
+            try
+            {
+                List<TallaProducto> Tiposproductos = await _db.sgc_TallaProducto.ToListAsync();
+                return Ok(Tiposproductos);
+            }
+            catch (Exception ex)
             {
                 return BadRequest();
             }
-            return Ok(tipo);
+
         }
 
-        // POST api/<TallaProductoController>
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] TallaProducto talla)
+        // GET api/<ColorProducto>/5 //busca por ID
+        [HttpGet("{IdTallaProducto}")]
+        public async Task<IActionResult> Get(int IdTallaProducto)
         {
-            TallaProducto talla2 = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.IdTallaProducto==talla.IdTallaProducto);
-            if (talla2 == null && talla!=null)
+            TallaProducto talla = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.IdTallaProducto==IdTallaProducto);
+            if (talla == null)
             {
+                return BadRequest();
+            }
+            return Ok(talla);
+        }
+
+
+
+
+        // POST api/<ColorProducto>
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] TallaProductoDTO tallaDTO)
+        {
+            TallaProducto talla2 = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.Talla.Equals(tallaDTO.Talla));
+            if (talla2 == null && tallaDTO!=null)
+            {
+                var talla = new TallaProducto
+                {
+                    Talla = tallaDTO.Talla
+                };
                 await _db.sgc_TallaProducto.AddAsync(talla);
                 await _db.SaveChangesAsync();
                 return Ok(talla);
             }
-            return BadRequest("El objeto ya existe");
+            return BadRequest("El color ya existe");
         }
 
-        // PUT api/<TallaProductoController>/5
+        // PUT api/<ColorProducto>/5
         [HttpPut("{IdTallaProducto}")]
-        public async Task<IActionResult> Put(int IdTallaProducto, [FromBody] TallaProducto talla)
+        public async Task<IActionResult> Put(int IdTallaProducto, [FromBody] TallaProductoDTO tallaDTO)
         {
-            TallaProducto talla2 = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.IdTallaProducto==IdTallaProducto);
-            if (talla2 != null)
+            TallaProducto actualaModificar = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.IdTallaProducto==IdTallaProducto);
+            var tallaqueyatengo = actualaModificar.Talla;
+            TallaProducto tallaquequieroponer = await _db.sgc_TallaProducto.FirstOrDefaultAsync(x => x.Talla.Equals(tallaDTO.Talla));
+
+            if ((tallaquequieroponer == null ||tallaquequieroponer.Talla.Equals(tallaqueyatengo)) && tallaDTO != null)
             {
-                talla2.Talla = talla.Talla != null ? talla.Talla : talla2.Talla;
-                _db.sgc_TallaProducto.Update(talla2);
+                actualaModificar.Talla = tallaDTO.Talla != null ? tallaDTO.Talla : actualaModificar.Talla;
+                _db.sgc_TallaProducto.Update(actualaModificar);
                 await _db.SaveChangesAsync();
-                return Ok(talla2);
+                return Ok(actualaModificar);
             }
-            return BadRequest("El producto a modificar no existe");
+            return BadRequest("La talla ya existe");
         }
 
-        // DELETE api/<TallaProductoController>/5
+        // DELETE api/<ColorProducto>/5
         [HttpDelete("{IdTallaProducto}")]
         public async Task<IActionResult> Delete(int IdTallaProducto)
         {

@@ -12,7 +12,7 @@ namespace APIProyecto.Models
         public string Descripcion { get; set; }
 
         // Propiedad de navegación para la relación uno a muchos con Producto
-        public ICollection<Producto> Productos { get; set; }
+        //public ICollection<Producto> Productos { get; set; }
 
 
     }
