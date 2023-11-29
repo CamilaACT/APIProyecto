@@ -69,9 +69,6 @@ namespace APIProyecto.Data
                 .WithOne(t => t.TallaProducto)
                 .HasForeignKey(t => t.TallaProductoIdTallaProducto);*/
 
-
-
-
         }
 
 

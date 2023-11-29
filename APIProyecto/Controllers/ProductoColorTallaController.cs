@@ -52,9 +52,59 @@ namespace APIProyecto.Controllers
             }
             return Ok(productocolortalla);
         }
+        [HttpGet("PorNombre/{ProductoNombre}")]
+        public async Task<IActionResult> Get(string ProductoNombre)
+        {
+            List<ProductoColorTalla> productosColoresTallas = await _db.sgc_ProductoColorTalla
+                .Include(p => p.Producto)
+                .Include(p => p.TallaProducto)
+                .Include(p => p.ColorProducto)
+                .Where(x => x.Producto.Nombre == ProductoNombre)
+                .ToListAsync();
 
+            if (productosColoresTallas == null || productosColoresTallas.Count == 0)
+            {
+                return NotFound(); // NotFound si no se encuentran productos con ese nombre.
+            }
 
+            return Ok(productosColoresTallas);
+        }
 
+        [HttpGet("PorColor/{ColorProductoNombre}")]
+        public async Task<IActionResult> GetColor(string ColorProductoNombre)
+        {
+            List<ProductoColorTalla> productosColoresTallas = await _db.sgc_ProductoColorTalla
+                .Include(p => p.Producto)
+                .Include(p => p.TallaProducto)
+                .Include(p => p.ColorProducto)
+                .Where(x => x.ColorProducto.Nombre == ColorProductoNombre)
+                .ToListAsync();
+
+            if (productosColoresTallas == null || productosColoresTallas.Count == 0)
+            {
+                return NotFound(); // NotFound si no se encuentran productos con ese nombre.
+            }
+
+            return Ok(productosColoresTallas);
+        }
+
+        [HttpGet("PorTalla/{TallaProductoTalla}")]
+        public async Task<IActionResult> GetTalla(string TallaProductoTalla)
+        {
+            List<ProductoColorTalla> productosColoresTallas = await _db.sgc_ProductoColorTalla
+                .Include(p => p.Producto)
+                .Include(p => p.TallaProducto)
+                .Include(p => p.ColorProducto)
+                .Where(x => x.TallaProducto.Talla == TallaProductoTalla)
+                .ToListAsync();
+
+            if (productosColoresTallas == null || productosColoresTallas.Count == 0)
+            {
+                return NotFound(); // NotFound si no se encuentran productos con ese nombre.
+            }
+
+            return Ok(productosColoresTallas);
+        }
 
         // POST api/<ColorProducto>
         [HttpPost]
