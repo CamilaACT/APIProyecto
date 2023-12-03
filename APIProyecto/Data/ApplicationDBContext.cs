@@ -16,6 +16,7 @@ namespace APIProyecto.Data
         
         public DbSet<ProductoColorTalla> sgc_ProductoColorTalla {  get; set; }
         public DbSet<Producto> sgc_ProductoTab { get; set; }
+        public DbSet<Usuario> sgc_Usuarios { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -57,6 +58,18 @@ namespace APIProyecto.Data
                 .HasOne(pct => pct.ColorProducto)
                 .WithMany()
                 .HasForeignKey(pct => pct.ColorProductoIdColorProducto);
+
+            modelBuilder.Entity<Usuario>().HasData(
+                  new Usuario
+                  {
+                      IdUsuario= 1,
+                      Nombre = "USUARIO 1",
+                      Apellido= "APELLIDO USUARIO 1",
+                      Cedula="1711512663",
+                      Login="USUARIOADMIN",
+                      Contrasenia="CONTRASENIAADMIN",
+                      NumeroSeguridad=1,
+                  });
 
 
             /* modelBuilder.Entity<ColorProducto>()
