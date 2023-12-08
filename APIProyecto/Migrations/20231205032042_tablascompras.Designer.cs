@@ -3,6 +3,7 @@ using APIProyecto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIProyecto.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231205032042_tablascompras")]
+    partial class tablascompras
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,11 +150,11 @@ namespace APIProyecto.Migrations
 
             modelBuilder.Entity("APIProyecto.Models.IntencionCompra", b =>
                 {
-                    b.Property<int>("IdIntencionCompra")
+                    b.Property<int>("IdFactura")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIntencionCompra"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdFactura"));
 
                     b.Property<int>("ClienteIdCliente")
                         .HasColumnType("int");
@@ -160,7 +163,7 @@ namespace APIProyecto.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("IdIntencionCompra");
+                    b.HasKey("IdFactura");
 
                     b.HasIndex("ClienteIdCliente");
 
@@ -169,16 +172,16 @@ namespace APIProyecto.Migrations
 
             modelBuilder.Entity("APIProyecto.Models.IntencionDescripcion", b =>
                 {
-                    b.Property<int>("IdIntencionDescripcion")
+                    b.Property<int>("IdDescripcion")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIntencionDescripcion"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDescripcion"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
 
-                    b.Property<int>("IntencionCompraIdIntencionCompra")
+                    b.Property<int>("FacturaIdFactura")
                         .HasColumnType("int");
 
                     b.Property<float>("PrecioTotal")
@@ -190,9 +193,9 @@ namespace APIProyecto.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.HasKey("IdIntencionDescripcion");
+                    b.HasKey("IdDescripcion");
 
-                    b.HasIndex("IntencionCompraIdIntencionCompra");
+                    b.HasIndex("FacturaIdFactura");
 
                     b.HasIndex("ProductoColorTallaIdProductoColorTalla");
 
@@ -394,9 +397,9 @@ namespace APIProyecto.Migrations
 
             modelBuilder.Entity("APIProyecto.Models.IntencionDescripcion", b =>
                 {
-                    b.HasOne("APIProyecto.Models.IntencionCompra", "IntencionCompra")
+                    b.HasOne("APIProyecto.Models.Factura", "Factura")
                         .WithMany()
-                        .HasForeignKey("IntencionCompraIdIntencionCompra")
+                        .HasForeignKey("FacturaIdFactura")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -406,7 +409,7 @@ namespace APIProyecto.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("IntencionCompra");
+                    b.Navigation("Factura");
 
                     b.Navigation("ProductoColorTalla");
                 });

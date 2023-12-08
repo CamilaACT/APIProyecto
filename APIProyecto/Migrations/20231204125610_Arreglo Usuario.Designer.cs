@@ -3,6 +3,7 @@ using APIProyecto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIProyecto.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231204125610_Arreglo Usuario")]
+    partial class ArregloUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -89,114 +92,6 @@ namespace APIProyecto.Migrations
                     b.HasKey("IdColorProducto");
 
                     b.ToTable("sgc_ColorProducto");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.Descripcion", b =>
-                {
-                    b.Property<int>("IdDescripcion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDescripcion"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FacturaIdFactura")
-                        .HasColumnType("int");
-
-                    b.Property<float>("PrecioTotal")
-                        .HasColumnType("real");
-
-                    b.Property<int>("ProductoColorTallaIdProductoColorTalla")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("IdDescripcion");
-
-                    b.HasIndex("FacturaIdFactura");
-
-                    b.HasIndex("ProductoColorTallaIdProductoColorTalla");
-
-                    b.ToTable("sgc_Descripcion");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.Factura", b =>
-                {
-                    b.Property<int>("IdFactura")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdFactura"));
-
-                    b.Property<int>("ClienteIdCliente")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Fecha")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IdFactura");
-
-                    b.HasIndex("ClienteIdCliente");
-
-                    b.ToTable("sgc_Factura");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.IntencionCompra", b =>
-                {
-                    b.Property<int>("IdIntencionCompra")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIntencionCompra"));
-
-                    b.Property<int>("ClienteIdCliente")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Fecha")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("IdIntencionCompra");
-
-                    b.HasIndex("ClienteIdCliente");
-
-                    b.ToTable("sgc_IntencionCompra");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.IntencionDescripcion", b =>
-                {
-                    b.Property<int>("IdIntencionDescripcion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIntencionDescripcion"));
-
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IntencionCompraIdIntencionCompra")
-                        .HasColumnType("int");
-
-                    b.Property<float>("PrecioTotal")
-                        .HasColumnType("real");
-
-                    b.Property<int>("ProductoColorTallaIdProductoColorTalla")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.HasKey("IdIntencionDescripcion");
-
-                    b.HasIndex("IntencionCompraIdIntencionCompra");
-
-                    b.HasIndex("ProductoColorTallaIdProductoColorTalla");
-
-                    b.ToTable("sgc_IntencionDescripcion");
                 });
 
             modelBuilder.Entity("APIProyecto.Models.Producto", b =>
@@ -349,66 +244,6 @@ namespace APIProyecto.Migrations
                             Nombre = "USUARIO 1",
                             NumeroSeguridad = 1
                         });
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.Descripcion", b =>
-                {
-                    b.HasOne("APIProyecto.Models.Factura", "Factura")
-                        .WithMany()
-                        .HasForeignKey("FacturaIdFactura")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("APIProyecto.Models.ProductoColorTalla", "ProductoColorTalla")
-                        .WithMany()
-                        .HasForeignKey("ProductoColorTallaIdProductoColorTalla")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Factura");
-
-                    b.Navigation("ProductoColorTalla");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.Factura", b =>
-                {
-                    b.HasOne("APIProyecto.Models.Cliente", "Cliente")
-                        .WithMany()
-                        .HasForeignKey("ClienteIdCliente")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.IntencionCompra", b =>
-                {
-                    b.HasOne("APIProyecto.Models.Cliente", "Cliente")
-                        .WithMany()
-                        .HasForeignKey("ClienteIdCliente")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("APIProyecto.Models.IntencionDescripcion", b =>
-                {
-                    b.HasOne("APIProyecto.Models.IntencionCompra", "IntencionCompra")
-                        .WithMany()
-                        .HasForeignKey("IntencionCompraIdIntencionCompra")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("APIProyecto.Models.ProductoColorTalla", "ProductoColorTalla")
-                        .WithMany()
-                        .HasForeignKey("ProductoColorTallaIdProductoColorTalla")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IntencionCompra");
-
-                    b.Navigation("ProductoColorTalla");
                 });
 
             modelBuilder.Entity("APIProyecto.Models.Producto", b =>

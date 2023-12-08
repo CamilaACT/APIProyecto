@@ -1,4 +1,5 @@
 ﻿using APIProyecto.Data;
+using APIProyecto.Migrations;
 using APIProyecto.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -74,7 +75,7 @@ namespace APIProyecto.Controllers
                 cliente2.Apellido = cliente.Apellido != null ? cliente.Apellido : cliente2.Apellido;
                 cliente2.Direccion = cliente.Direccion != null ? cliente.Direccion : cliente2.Direccion;
                 cliente2.NumeroTarjeta = cliente.NumeroTarjeta != null ? cliente.NumeroTarjeta : cliente2.NumeroTarjeta;
-                cliente2.NumeroSeguridad = cliente.NumeroSeguridad != null ? cliente.NumeroSeguridad : cliente2.NumeroSeguridad;
+                
 
                 _db.sgc_Cliente.Update(cliente2);
                 await _db.SaveChangesAsync();
@@ -84,9 +85,28 @@ namespace APIProyecto.Controllers
         }
 
         // DELETE api/<ClienteController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{IdCliente}")]
+        public async Task<IActionResult> Delete(int IdCliente)
         {
+            Cliente cliente = await _db.sgc_Cliente.FirstOrDefaultAsync(x => x.IdCliente==IdCliente);
+            if (cliente != null)
+            {
+                _db.sgc_Cliente.Remove(cliente);
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            return BadRequest();
+        }
+        //metodo para el login 
+        [HttpGet("{Login}/{Contrasenia}")]
+        public async Task<IActionResult> GetCredenciales(string Login, string Contrasenia)
+        {
+            Cliente cliente = await _db.sgc_Cliente.FirstOrDefaultAsync(x => x.Login.Equals(Login) && x.Contrasenia.Equals(Contrasenia));
+            if (cliente == null)
+            {
+                return BadRequest();
+            }
+            return Ok(cliente);
         }
     }
 }

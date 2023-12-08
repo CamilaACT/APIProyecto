@@ -3,6 +3,7 @@ using APIProyecto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIProyecto.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231208174335_Relaciondescripcion")]
+    partial class Relaciondescripcion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,11 +172,11 @@ namespace APIProyecto.Migrations
 
             modelBuilder.Entity("APIProyecto.Models.IntencionDescripcion", b =>
                 {
-                    b.Property<int>("IdIntencionDescripcion")
+                    b.Property<int>("IdDescripcion")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdIntencionDescripcion"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDescripcion"));
 
                     b.Property<int>("Cantidad")
                         .HasColumnType("int");
@@ -190,7 +193,7 @@ namespace APIProyecto.Migrations
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
 
-                    b.HasKey("IdIntencionDescripcion");
+                    b.HasKey("IdDescripcion");
 
                     b.HasIndex("IntencionCompraIdIntencionCompra");
 

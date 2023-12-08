@@ -22,7 +22,10 @@ namespace APIProyecto.Models
         [Required(ErrorMessage = "El Número de Tarjeta es un campo obligatorio.")]
         public int NumeroTarjeta { get; set; }
 
-        [Required(ErrorMessage = "El Número de Seguridad es un campo obligatorio.")]
-        public int NumeroSeguridad { get; set; }
+       [Required(ErrorMessage = "Login es un campo obligatorio.")]
+        public string Login { get; set; }
+
+        [Required(ErrorMessage = "Contrasenia es un campo obligatorio.")]
+        public string Contrasenia { get; set; }
     }
 }
