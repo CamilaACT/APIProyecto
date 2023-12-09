@@ -72,18 +72,28 @@ namespace APIProyecto.Controllers
 
 
 
+
         // POST api/<ColorProducto>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] IntencionDescripcionDTO IntencionDescripcionDTO)
         {
+            double total= 0.0;
             IntencionDescripcion intencion2 = await _db.sgc_IntencionDescripcion.FirstOrDefaultAsync(x => x.IdIntencionDescripcion==IntencionDescripcionDTO.IdIntencionDescripcion);
+            
             if (intencion2==null && IntencionDescripcionDTO!=null)
             {
+                ProductoColorTalla prod = _db.sgc_ProductoColorTalla.FirstOrDefault(x => x.IdProductoColorTalla==IntencionDescripcionDTO.ProductoColorTallaIdProductoColorTalla);
+                if (prod != null)
+                {
+                    var precio = prod.Precio;
+                    total = precio*IntencionDescripcionDTO.Cantidad;
+                }
+
                 var Intenciondescripcion1 = new IntencionDescripcion
                 {
                     Cantidad=IntencionDescripcionDTO.Cantidad,
-                    PrecioTotal=IntencionDescripcionDTO.PrecioTotal,
-                    Status=IntencionDescripcionDTO.Status,
+                    PrecioTotal=total,
+                    Status=true,
                     ProductoColorTallaIdProductoColorTalla=IntencionDescripcionDTO.ProductoColorTallaIdProductoColorTalla,
                     IntencionCompraIdIntencionCompra = IntencionDescripcionDTO.IntencionCompraIdIntencionCompra
                 };
@@ -125,6 +135,65 @@ namespace APIProyecto.Controllers
                 return NoContent();
             }
             return BadRequest();
+        }
+
+
+        [HttpGet("PorCarrito/{IntencionCompraIdIntencionCompra}")]
+        public async Task<IActionResult> GetListaProductosDelCarrito(int IntencionCompraIdIntencionCompra)
+        {
+            try
+            {
+                // Incluye la información del TipoProducto en la consulta
+                List<IntencionDescripcion> intenciondescripciones = await _db.sgc_IntencionDescripcion
+                    .Include(pcl => pcl.IntencionCompra)
+                    .Include(pct => pct.ProductoColorTalla)
+                    .Where(x => x.IntencionCompraIdIntencionCompra == IntencionCompraIdIntencionCompra)
+                    .ToListAsync();
+
+                return Ok(intenciondescripciones);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            //EL CODIGO EN SQL QUE QUIERO REPRESENTAR ES:
+            /*SELECT P.IdProduto, TP.Nombre, P.Nombre, P.Descripcion 
+                FROM sgc_ProductoTab P
+                INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
+
+        }
+
+        [HttpPost("GenerarDescripcionFactura/{IntencionCompraIdIntencionCompra}/{FacturaIdFactura}")]
+        public async Task<IActionResult> PostComprarDescripcion(int IntencionCompraIdIntencionCompra, int FacturaIdFactura)
+        {
+            List<IntencionDescripcion> intenciondescripciones = await _db.sgc_IntencionDescripcion
+                    .Include(pcl => pcl.IntencionCompra)
+                    .Include(pct => pct.ProductoColorTalla)
+                    .Where(x => x.IntencionCompraIdIntencionCompra == IntencionCompraIdIntencionCompra)
+                    .ToListAsync();
+            if(intenciondescripciones.Count > 0)
+            {
+                foreach(var intenciondescripcion in intenciondescripciones)
+                {
+                    ProductoColorTalla producto = intenciondescripcion.ProductoColorTalla;
+                    var stockactual = producto.Stock-intenciondescripcion.Cantidad;
+                    intenciondescripcion.ProductoColorTalla.Stock=stockactual;
+                    var descripcion = new Descripcion
+                    {
+                        Cantidad=intenciondescripcion.Cantidad,
+                        PrecioTotal=intenciondescripcion.PrecioTotal,
+                        Status=intenciondescripcion.Status,
+                        ProductoColorTallaIdProductoColorTalla=intenciondescripcion.ProductoColorTallaIdProductoColorTalla,
+                        FacturaIdFactura = FacturaIdFactura
+                    };
+                    await _db.sgc_Descripcion.AddAsync(descripcion);
+                    await _db.SaveChangesAsync();
+                }
+                return Ok();
+            }
+
+            return BadRequest("No existe la intencion de compra");
         }
     }
 }

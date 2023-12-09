@@ -3,6 +3,7 @@ using APIProyecto.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APIProyecto.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231208233309_CorrecionDelPrecio")]
+    partial class CorrecionDelPrecio
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,8 +108,8 @@ namespace APIProyecto.Migrations
                     b.Property<int>("FacturaIdFactura")
                         .HasColumnType("int");
 
-                    b.Property<double>("PrecioTotal")
-                        .HasColumnType("float");
+                    b.Property<float>("PrecioTotal")
+                        .HasColumnType("real");
 
                     b.Property<int>("ProductoColorTallaIdProductoColorTalla")
                         .HasColumnType("int");

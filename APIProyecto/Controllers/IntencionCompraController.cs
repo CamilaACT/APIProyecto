@@ -154,5 +154,29 @@ namespace APIProyecto.Controllers
                 INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
 
         }
+
+        // POST api/<ColorProducto>
+        [HttpPost("GenerarCompraFactura/{IntencionCompraIdIntencionCompra}")]
+        public async Task<IActionResult> PostComprar(int IntencionCompraIdIntencionCompra)
+        {
+            IntencionCompra intencion2 = await _db.sgc_IntencionCompra.FirstOrDefaultAsync(x => x.IdIntencionCompra== IntencionCompraIdIntencionCompra);
+            if (intencion2!=null)
+            {
+                var Factura = new Factura
+                {
+                    Fecha=intencion2.Fecha,
+                    ClienteIdCliente=intencion2.ClienteIdCliente,
+                    
+                };
+                await _db.sgc_Factura.AddAsync(Factura);
+                await _db.SaveChangesAsync();
+                return Ok(Factura);
+
+            }
+
+            return BadRequest("No existe la intencion de compra");
+        }
+
+
     }
 }

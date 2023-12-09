@@ -125,5 +125,32 @@ namespace APIProyecto.Controllers
             }
             return BadRequest();
         }
+        [HttpGet("PorCarrito/{FacturaIdFactura}")]
+        public async Task<IActionResult> GetListaProductosDelCarrito(int FacturaIdFactura)
+        {
+            try
+            {
+                // Incluye la información del TipoProducto en la consulta
+                List<Descripcion> descripciones = await _db.sgc_Descripcion
+                    .Include(pcl => pcl.Factura)
+                    .Include(pct => pct.ProductoColorTalla)
+                    .Where(x => x.FacturaIdFactura == FacturaIdFactura)
+                    .ToListAsync();
+
+                return Ok(descripciones);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            //EL CODIGO EN SQL QUE QUIERO REPRESENTAR ES:
+            /*SELECT P.IdProduto, TP.Nombre, P.Nombre, P.Descripcion 
+                FROM sgc_ProductoTab P
+                INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
+
+        }
+
+
     }
 }

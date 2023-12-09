@@ -120,5 +120,78 @@ namespace APIProyecto.Controllers
             }
             return BadRequest();
         }
+        [HttpGet("PorCliente/{ClienteIdCliente}")]
+        public async Task<IActionResult> GetListaIntencionCompra(int ClienteIdCliente)
+        {
+            try
+            {
+                // Incluye la información del TipoProducto en la consulta
+                List<Factura> facturas = await _db.sgc_Factura
+                    .Include(p => p.Cliente)  // Incluir la propiedad de navegación TipoProducto
+                    .Where(x => x.ClienteIdCliente == ClienteIdCliente)
+                    .ToListAsync();
+
+                if (facturas == null || facturas.Count == 0)
+                {
+                    return NotFound(); // Cambiado a NotFound cuando no se encuentran resultados
+                }
+
+                return Ok(facturas);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            //EL CODIGO EN SQL QUE QUIERO REPRESENTAR ES:
+            /*SELECT P.IdProduto, TP.Nombre, P.Nombre, P.Descripcion 
+                FROM sgc_ProductoTab P
+                INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
+
+        }
+        [HttpGet("TotalFactura/{FacturaIdFactura}")]
+        public async Task<IActionResult> GetTotalCarrito(int FacturaIdFactura)
+        {
+            try
+            {
+                // Incluye la información del TipoProducto en la consulta
+                List<Descripcion> descripciones = await _db.sgc_Descripcion
+                    .Include(pcl => pcl.Factura)
+                    .Include(pct => pct.ProductoColorTalla)
+                    .Where(x => x.FacturaIdFactura == FacturaIdFactura)
+                    .ToListAsync();
+                if (descripciones.Count!=0 || descripciones != null)
+                {
+                    double totalPrecioCarrito = 0.0;
+
+                    foreach (var descripcion in descripciones)
+                    {
+
+                        totalPrecioCarrito += descripcion.PrecioTotal;
+                    }
+
+
+                    return Ok(totalPrecioCarrito);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            //EL CODIGO EN SQL QUE QUIERO REPRESENTAR ES:
+            /*SELECT P.IdProduto, TP.Nombre, P.Nombre, P.Descripcion 
+                FROM sgc_ProductoTab P
+                INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
+
+        }
+
+
     }
 }
