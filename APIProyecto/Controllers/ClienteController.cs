@@ -38,7 +38,7 @@ namespace APIProyecto.Controllers
             }
             return Ok(cleinte);
         }
-        [HttpGet("{Cedula}")]
+        [HttpGet("Porcedula/{Cedula}")]
         public async Task<IActionResult> Get(String Cedula)
         {
             Cliente cleinte = await _db.sgc_Cliente.FirstOrDefaultAsync(x => x.Cedula==Cedula);
@@ -75,7 +75,8 @@ namespace APIProyecto.Controllers
                 cliente2.Apellido = cliente.Apellido != null ? cliente.Apellido : cliente2.Apellido;
                 cliente2.Direccion = cliente.Direccion != null ? cliente.Direccion : cliente2.Direccion;
                 cliente2.NumeroTarjeta = cliente.NumeroTarjeta != null ? cliente.NumeroTarjeta : cliente2.NumeroTarjeta;
-                
+                cliente2.Contrasenia = cliente.Contrasenia != null ? cliente.Contrasenia : cliente2.Contrasenia;
+                cliente2.Login = cliente.Login != null ? cliente.Login : cliente2.Login;
 
                 _db.sgc_Cliente.Update(cliente2);
                 await _db.SaveChangesAsync();

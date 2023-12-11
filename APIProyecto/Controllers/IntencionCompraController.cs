@@ -156,8 +156,8 @@ namespace APIProyecto.Controllers
         }
 
         // POST api/<ColorProducto>
-        [HttpPost("GenerarCompraFactura/{IntencionCompraIdIntencionCompra}")]
-        public async Task<IActionResult> PostComprar(int IntencionCompraIdIntencionCompra)
+        [HttpPost("GenerarCompraFactura/")]
+        public async Task<IActionResult> PostComprar([FromBody] int IntencionCompraIdIntencionCompra)
         {
             IntencionCompra intencion2 = await _db.sgc_IntencionCompra.FirstOrDefaultAsync(x => x.IdIntencionCompra== IntencionCompraIdIntencionCompra);
             if (intencion2!=null)
@@ -177,6 +177,48 @@ namespace APIProyecto.Controllers
             return BadRequest("No existe la intencion de compra");
         }
 
+        [HttpGet("TotalIntencionCompra/{IntencionCompraIdIntencionCompra}")]
+        public async Task<IActionResult> GetTotalCarrito(int IntencionCompraIdIntencionCompra)
+        {
+            try
+            {
+                // Incluye la información del TipoProducto en la consulta
+                List<IntencionDescripcion> descripciones = await _db.sgc_IntencionDescripcion
+                    .Include(pcl => pcl.IntencionCompra)
+                    .Include(pct => pct.ProductoColorTalla)
+                    .Where(x => x.IntencionCompraIdIntencionCompra == IntencionCompraIdIntencionCompra)
+                    .ToListAsync();
+                if (descripciones.Count!=0 || descripciones != null)
+                {
+                    double totalPrecioCarrito = 0.0;
+
+                    foreach (var descripcion in descripciones)
+                    {
+
+                        totalPrecioCarrito += descripcion.PrecioTotal;
+                    }
+
+
+                    return Ok(totalPrecioCarrito);
+
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            //EL CODIGO EN SQL QUE QUIERO REPRESENTAR ES:
+            /*SELECT P.IdProduto, TP.Nombre, P.Nombre, P.Descripcion 
+                FROM sgc_ProductoTab P
+                INNER JOIN sgc_TipoProducto TP ON P.TipoProductoIdTipoProducto = TP.IdTipoProducto*/
+
+        }
 
     }
 }

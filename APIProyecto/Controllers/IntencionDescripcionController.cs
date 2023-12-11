@@ -164,17 +164,17 @@ namespace APIProyecto.Controllers
 
         }
 
-        [HttpPost("GenerarDescripcionFactura/{IntencionCompraIdIntencionCompra}/{FacturaIdFactura}")]
-        public async Task<IActionResult> PostComprarDescripcion(int IntencionCompraIdIntencionCompra, int FacturaIdFactura)
+        [HttpPost("GenerarDescripcionFactura/")]
+        public async Task<IActionResult> PostComprarDescripcion([FromBody] SolicitudDescripcion solicitud)
         {
             List<IntencionDescripcion> intenciondescripciones = await _db.sgc_IntencionDescripcion
                     .Include(pcl => pcl.IntencionCompra)
                     .Include(pct => pct.ProductoColorTalla)
-                    .Where(x => x.IntencionCompraIdIntencionCompra == IntencionCompraIdIntencionCompra)
+                    .Where(x => x.IntencionCompraIdIntencionCompra == solicitud.IntencionCompraIdIntencionCompra)
                     .ToListAsync();
             if(intenciondescripciones.Count > 0)
             {
-                foreach(var intenciondescripcion in intenciondescripciones)
+                foreach(var intenciondescripcion in intenciondescripciones) 
                 {
                     ProductoColorTalla producto = intenciondescripcion.ProductoColorTalla;
                     var stockactual = producto.Stock-intenciondescripcion.Cantidad;
@@ -185,7 +185,7 @@ namespace APIProyecto.Controllers
                         PrecioTotal=intenciondescripcion.PrecioTotal,
                         Status=intenciondescripcion.Status,
                         ProductoColorTallaIdProductoColorTalla=intenciondescripcion.ProductoColorTallaIdProductoColorTalla,
-                        FacturaIdFactura = FacturaIdFactura
+                        FacturaIdFactura = solicitud.FacturaIdFactura
                     };
                     await _db.sgc_Descripcion.AddAsync(descripcion);
                     await _db.SaveChangesAsync();
